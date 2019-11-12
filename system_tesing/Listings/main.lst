@@ -1,0 +1,104 @@
+C51 COMPILER V9.60.0.0   MAIN                                                              11/04/2019 18:53:50 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\Tools\MDK_C51\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listing
+                    -s\main.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          
+   3          sbit device=P3^1;
+   4          sbit led=P1^0;
+   5          
+   6          unsigned char error_callback=0;
+   7          unsigned char error_flag=0;
+   8          unsigned char count=0;
+   9          
+  10          unsigned char Display[9]={0x00,0x01,0x03,0x07,0x0f,0x1f,0x3f,0x7f,0xff};
+  11          
+  12          void Device_Init();
+  13          void Delay(unsigned int time);
+  14          void Display_LED();
+  15          
+  16          int main()
+  17          {
+  18   1        Device_Init();
+  19   1        
+  20   1        while(1)
+  21   1        {
+  22   2          if(error_callback==0)
+  23   2            Display_LED();
+  24   2          else 
+  25   2            P2=0x00;
+  26   2        }
+  27   1      
+  28   1        
+  29   1      }
+  30          
+  31          void Report_Error() interrupt 0
+  32          {
+  33   1        count++;
+  34   1        if(count>3)
+  35   1        {
+  36   2          error_callback=1;
+  37   2          led=1;
+  38   2        }
+  39   1      }
+  40          
+  41          void Repair_Error() interrupt 2
+  42          {
+  43   1        count=0;
+  44   1        error_callback=0;
+  45   1        led=0;
+  46   1      }
+  47          
+  48          void Device_Init()
+  49          {
+  50   1        led=0;
+  51   1        IT0=1;
+  52   1        EX0=1;
+  53   1        IT1=1;
+  54   1        EX1=1;
+C51 COMPILER V9.60.0.0   MAIN                                                              11/04/2019 18:53:50 PAGE 2   
+
+  55   1        EA=1;
+  56   1      }
+  57          
+  58          void Display_LED()
+  59          {
+  60   1        unsigned char i;
+  61   1        for(i=0;i<9;i++)
+  62   1        {
+  63   2          P2=Display[i];
+  64   2          Delay(50);
+  65   2        }
+  66   1        for(i=8;i>0;i--)
+  67   1        {
+  68   2          P2=Display[i];
+  69   2          Delay(50);
+  70   2        }
+  71   1      }
+  72          
+  73          void Delay(unsigned int time)
+  74          {
+  75   1        unsigned char i,j;
+  76   1        for(i=0;i<time;i++)
+  77   1          for(j=0;j<125;j++);
+  78   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    149    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     12       1
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

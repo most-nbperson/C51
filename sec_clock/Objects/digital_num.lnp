@@ -1,0 +1,4 @@
+".\Objects\STARTUP.obj",
+".\Objects\main.obj" 
+TO ".\Objects\digital_num" 
+PRINT(".\Listings\digital_num.m51")

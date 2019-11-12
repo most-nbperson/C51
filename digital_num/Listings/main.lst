@@ -1,0 +1,102 @@
+C51 COMPILER V9.60.0.0   MAIN                                                              11/12/2019 11:55:59 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\Tools\MDK_C51\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listing
+                    -s\main.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          
+   3          sbit RED=P2^0;
+   4          sbit GREEN=P2^1;
+   5          unsigned char show_flag=1;
+   6          int count=0;
+   7          int time=20;
+   8          
+   9          const char num_tab[10]={0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f};
+  10          
+  11          void Device_Init();
+  12          void Delay(int i);
+  13          
+  14          int main()
+  15          {
+  16   1        Device_Init();
+  17   1        while(1)
+  18   1        {
+  19   2          if(time<10)
+  20   2          {
+  21   3            P0=num_tab[time];
+  22   3            Delay(100);
+  23   3          }
+  24   2          else 
+  25   2            P0=0x00;
+  26   2        
+  27   2          if(show_flag)
+  28   2          {
+  29   3            RED=0;
+  30   3            GREEN=1;
+  31   3          } 
+  32   2          else
+  33   2          {
+  34   3            RED=1;
+  35   3            GREEN=0;
+  36   3          }
+  37   2        }
+  38   1      
+  39   1        
+  40   1      }
+  41          
+  42          void Device_Init()
+  43          {
+  44   1        RED=0;
+  45   1        GREEN=0;
+  46   1        
+  47   1        TMOD=0x01;
+  48   1        TH0=(65536-50000)/256;
+  49   1        TL0=(65536-50000)%256;
+  50   1        ET0=1;
+  51   1        TR0=1;
+  52   1        
+  53   1        EA=1;
+  54   1      }
+C51 COMPILER V9.60.0.0   MAIN                                                              11/12/2019 11:55:59 PAGE 2   
+
+  55          
+  56          void Delay(int i)
+  57          {
+  58   1        while(i--);       
+  59   1      }
+  60          
+  61          void Delay20s() interrupt 1
+  62          {
+  63   1        TH0=(65536-50000)/256;
+  64   1        TL0=(65536-50000)%256;
+  65   1        count++;
+  66   1        
+  67   1        if(count%20==0)
+  68   1          time--;
+  69   1        
+  70   1        if(count>400)
+  71   1        {
+  72   2          show_flag=!show_flag;
+  73   2          time=20;
+  74   2          count=0;
+  75   2        }
+  76   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    192    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     15    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
