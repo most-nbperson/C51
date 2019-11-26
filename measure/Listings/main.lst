@@ -1,0 +1,180 @@
+C51 COMPILER V9.60.0.0   MAIN                                                              11/17/2019 23:33:55 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\Tools\MDK_C51\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listing
+                    -s\main.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          
+   3          
+   4          sbit location1=P2^0;
+   5          sbit location2=P2^1;
+   6          sbit location3=P2^2;
+   7          sbit location4=P2^3;
+   8          sbit input=P3^2;
+   9          
+  10          int count=0;
+  11          int time=0;
+  12          int show_flag=0;
+  13          int OKAY=0;
+  14          
+  15          unsigned char num1=0;//千位
+  16          unsigned char num2=0;//百位
+  17          unsigned char num3=0;//十位
+  18          unsigned char num4=0;//个位
+  19          
+  20          char num_tab[10]={0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f};
+  21          
+  22          enum
+  23          {
+  24            L1=1,
+  25            L2=2,
+  26            L3=3,
+  27            L4=4
+  28          };
+  29          
+  30          void Dispaly(unsigned char location,unsigned char num,unsigned char dp);
+  31          void Device_Init();
+  32          void Delay(int i);
+  33          void Show();
+  34          
+  35          
+  36          int main()
+  37          {
+  38   1        Device_Init();
+  39   1        while(1)
+  40   1        {
+  41   2      
+  42   2          
+  43   2          time = count*50 + ((TH0-0x3b)*256+(TL0-0xb0))/1000;
+  44   2          Show();
+  45   2        }
+  46   1      }
+  47          
+  48          void Device_Init()
+  49          {
+  50   1        TMOD=0x09;
+  51   1        
+  52   1        ET0=1;
+  53   1        
+  54   1        TH0=0x3c;
+C51 COMPILER V9.60.0.0   MAIN                                                              11/17/2019 23:33:55 PAGE 2   
+
+  55   1        TL0=0xb0; //50ms
+  56   1        
+  57   1        TR0=1;
+  58   1        EA=1;
+  59   1      }
+  60          
+  61          void Delay(int i)
+  62          {
+  63   1        while(i--);       
+  64   1      }
+  65          
+  66          void Dispaly(unsigned char location,unsigned char num,unsigned char dp)
+  67          {
+  68   1        if(location==L1)
+  69   1        {
+  70   2          location1=0;
+  71   2          location2=1;
+  72   2          location3=1;
+  73   2          location4=1;
+  74   2          
+  75   2          if(dp)
+  76   2            P0=num_tab[num]|0x80;
+  77   2          else
+  78   2            P0=num_tab[num];
+  79   2          
+  80   2          Delay(100);
+  81   2          P0=0x00;  //消隐
+  82   2        }
+  83   1        else if(location==L2)
+  84   1        {
+  85   2          location1=1;
+  86   2          location2=0;
+  87   2          location3=1;
+  88   2          location4=1;
+  89   2          
+  90   2          if(dp)
+  91   2            P0=num_tab[num]|0x80;
+  92   2          else
+  93   2            P0=num_tab[num];
+  94   2          
+  95   2          Delay(100);
+  96   2          P0=0x00;  //消隐
+  97   2        }
+  98   1        else if(location==L3)
+  99   1        {
+ 100   2          location1=1;
+ 101   2          location2=1;
+ 102   2          location3=0;
+ 103   2          location4=1;
+ 104   2          
+ 105   2          if(dp)
+ 106   2            P0=num_tab[num]|0x80;
+ 107   2          else
+ 108   2            P0=num_tab[num];
+ 109   2          
+ 110   2          Delay(100);
+ 111   2          P0=0x00;  //消隐
+ 112   2        }
+ 113   1        else if(location==L4)
+ 114   1        {
+ 115   2          location1=1;
+ 116   2          location2=1;
+C51 COMPILER V9.60.0.0   MAIN                                                              11/17/2019 23:33:55 PAGE 3   
+
+ 117   2          location3=1;
+ 118   2          location4=0;
+ 119   2          
+ 120   2          if(dp)
+ 121   2            P0=num_tab[num]|0x80;
+ 122   2          else
+ 123   2            P0=num_tab[num];
+ 124   2          
+ 125   2          Delay(100);
+ 126   2          P0=0x00;  //消隐
+ 127   2        }
+ 128   1      
+ 129   1      }
+ 130          
+ 131          void Show()
+ 132          {
+ 133   1          num4=(time/1000)%10;
+ 134   1          num3=(time/100)%10;
+ 135   1          num2=(time/10)%10;
+ 136   1          num1=time%10;
+ 137   1          
+ 138   1          Dispaly(L1,num4,0);
+ 139   1          Dispaly(L2,num3,0);
+ 140   1          Dispaly(L3,num2,0);
+ 141   1          Dispaly(L4,num1,0); 
+ 142   1      }
+ 143          
+ 144          
+ 145          void Timer1_Int() interrupt 1
+ 146          {
+ 147   1        TH0=0x3c;   //timer0赋初值
+ 148   1        TL0=0xb0;   //50ms初值
+ 149   1        count++;
+ 150   1        
+ 151   1      }
+ 152          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    364    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     22    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

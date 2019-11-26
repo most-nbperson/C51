@@ -1,0 +1,418 @@
+C51 COMPILER V9.60.0.0   MAIN                                                              11/25/2019 07:28:38 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\Tools\MDK_C51\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listing
+                    -s\main.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include <stdio.h>
+   3          #include <string.h>
+   4          enum
+   5          {
+   6            L1,
+   7            L2,
+   8            L3,
+   9            L4,
+  10            L5,
+  11            L6,
+  12            L7,
+  13            L8,
+  14            
+  15            L9,
+  16            L10,
+  17            L11,
+  18            L12,
+  19            L13,
+  20            L14,
+  21            L15,
+  22            L16,
+  23            
+  24            L17,
+  25            L18,
+  26          };
+  27          
+  28          sbit last2=P3^6;
+  29          sbit last1=P3^7;
+  30          
+  31          
+  32          char num_tab[10]={0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f};
+  33          char location_tab[10]={0xfe,0xfd,0xfb,0xf7,0xef,0xdf,0xbf,0x7f};
+  34          
+  35          char sendbuff[]="17150211 1715021103 WJM\n";
+  36          char getbuff[19];
+  37          
+  38          unsigned char show_flag=L1;
+  39          unsigned char get_ready=0;
+  40          
+  41          int ID_num[18];
+  42          
+  43          void Dispaly(unsigned char location,unsigned char num,unsigned char dp)
+  44          {
+  45   1        
+  46   1        if(location==L1)
+  47   1        {
+  48   2          P2=location_tab[L1];
+  49   2          P1=0xff;
+  50   2          last2=1;
+  51   2          last1=1;
+  52   2          if(dp)
+  53   2            P0=num_tab[num]|0x80;
+  54   2          else
+C51 COMPILER V9.60.0.0   MAIN                                                              11/25/2019 07:28:38 PAGE 2   
+
+  55   2            P0=num_tab[num];
+  56   2        }
+  57   1        else if(location==L2)
+  58   1        {
+  59   2          P2=location_tab[L2];
+  60   2          P1=0xff;
+  61   2          last2=1;
+  62   2          last1=1;
+  63   2          
+  64   2          if(dp)
+  65   2            P0=num_tab[num]|0x80;
+  66   2          else
+  67   2            P0=num_tab[num];
+  68   2        }
+  69   1        else if(location==L3)
+  70   1        {
+  71   2          P2=location_tab[L3];
+  72   2          P1=0xff;
+  73   2          last2=1;
+  74   2          last1=1;
+  75   2          
+  76   2          if(dp)
+  77   2            P0=num_tab[num]|0x80;
+  78   2          else
+  79   2            P0=num_tab[num];
+  80   2        }
+  81   1        else if(location==L4)
+  82   1        {
+  83   2          P2=location_tab[L4];
+  84   2          P1=0xff;
+  85   2          last2=1;
+  86   2          last1=1;
+  87   2          
+  88   2          if(dp)
+  89   2            P0=num_tab[num]|0x80;
+  90   2          else
+  91   2            P0=num_tab[num];
+  92   2        }
+  93   1        else if(location==L5)
+  94   1        {
+  95   2          P2=location_tab[L5];
+  96   2          P1=0xff;
+  97   2          last2=1;
+  98   2          last1=1;
+  99   2          if(dp)
+ 100   2            P0=num_tab[num]|0x80;
+ 101   2          else
+ 102   2            P0=num_tab[num];
+ 103   2        }
+ 104   1        else if(location==L6)
+ 105   1        {
+ 106   2          P2=location_tab[L6];
+ 107   2          P1=0xff;
+ 108   2          last2=1;
+ 109   2          last1=1;
+ 110   2          if(dp)
+ 111   2            P0=num_tab[num]|0x80;
+ 112   2          else
+ 113   2            P0=num_tab[num];
+ 114   2        }
+ 115   1        else if(location==L7)
+ 116   1        {
+C51 COMPILER V9.60.0.0   MAIN                                                              11/25/2019 07:28:38 PAGE 3   
+
+ 117   2          P2=location_tab[L7];
+ 118   2          P1=0xff;
+ 119   2          last2=1;
+ 120   2          last1=1;
+ 121   2          if(dp)
+ 122   2            P0=num_tab[num]|0x80;
+ 123   2          else
+ 124   2            P0=num_tab[num];
+ 125   2        }
+ 126   1        else if(location==L8)
+ 127   1        {
+ 128   2          P2=location_tab[L8];
+ 129   2          P1=0xff;
+ 130   2          last2=1;
+ 131   2          last1=1;
+ 132   2          if(dp)
+ 133   2            P0=num_tab[num]|0x80;
+ 134   2          else
+ 135   2            P0=num_tab[num];
+ 136   2      
+ 137   2        }
+ 138   1        
+ 139   1        
+ 140   1        else if(location==L9)
+ 141   1        {
+ 142   2          P2=0xff;
+ 143   2          P1=location_tab[L1];
+ 144   2          last2=1;
+ 145   2          last1=1;
+ 146   2          if(dp)
+ 147   2            P0=num_tab[num]|0x80;
+ 148   2          else
+ 149   2            P0=num_tab[num];
+ 150   2        }
+ 151   1        else if(location==L10)
+ 152   1        {
+ 153   2          P2=0xff;
+ 154   2          P1=location_tab[L2];
+ 155   2          last2=1;
+ 156   2          last1=1;
+ 157   2          if(dp)
+ 158   2            P0=num_tab[num]|0x80;
+ 159   2          else
+ 160   2            P0=num_tab[num];
+ 161   2        }
+ 162   1        else if(location==L11)
+ 163   1        {
+ 164   2          P2=0xff;
+ 165   2          P1=location_tab[L3];
+ 166   2          last2=1;
+ 167   2          last1=1;
+ 168   2          if(dp)
+ 169   2            P0=num_tab[num]|0x80;
+ 170   2          else
+ 171   2            P0=num_tab[num];
+ 172   2        }
+ 173   1        else if(location==L12)
+ 174   1        {
+ 175   2          P2=0xff;
+ 176   2          P1=location_tab[L4];
+ 177   2          last2=1;
+ 178   2          last1=1;
+C51 COMPILER V9.60.0.0   MAIN                                                              11/25/2019 07:28:38 PAGE 4   
+
+ 179   2          if(dp)
+ 180   2            P0=num_tab[num]|0x80;
+ 181   2          else
+ 182   2            P0=num_tab[num];
+ 183   2        }
+ 184   1        else if(location==L13)
+ 185   1        {
+ 186   2          P2=0xff;
+ 187   2          P1=location_tab[L5];
+ 188   2          last2=1;
+ 189   2          last1=1;
+ 190   2          if(dp)
+ 191   2            P0=num_tab[num]|0x80;
+ 192   2          else
+ 193   2            P0=num_tab[num];
+ 194   2        }
+ 195   1        else if(location==L14)
+ 196   1        {
+ 197   2          P2=0xff;
+ 198   2          P1=location_tab[L6];
+ 199   2          last2=1;
+ 200   2          last1=1;
+ 201   2          if(dp)
+ 202   2            P0=num_tab[num]|0x80;
+ 203   2          else
+ 204   2            P0=num_tab[num];
+ 205   2        }
+ 206   1        else if(location==L15)
+ 207   1        {
+ 208   2          P2=0xff;
+ 209   2          P1=location_tab[L7];
+ 210   2          last2=1;
+ 211   2          last1=1;
+ 212   2          if(dp)
+ 213   2            P0=num_tab[num]|0x80;
+ 214   2          else
+ 215   2            P0=num_tab[num];
+ 216   2        }
+ 217   1        else if(location==L16)
+ 218   1        {
+ 219   2          P2=0xff;
+ 220   2          P1=location_tab[L8];
+ 221   2          last2=1;
+ 222   2          last1=1;
+ 223   2          if(dp)
+ 224   2            P0=num_tab[num]|0x80;
+ 225   2          else
+ 226   2            P0=num_tab[num];
+ 227   2        }
+ 228   1        
+ 229   1        
+ 230   1        else if(location==L17)
+ 231   1        {
+ 232   2          P2=0xff;
+ 233   2          P1=0xff;
+ 234   2          last2=0;
+ 235   2          last1=1;
+ 236   2          if(dp)
+ 237   2            P0=num_tab[num]|0x80;
+ 238   2          else
+ 239   2            P0=num_tab[num];
+ 240   2        }
+C51 COMPILER V9.60.0.0   MAIN                                                              11/25/2019 07:28:38 PAGE 5   
+
+ 241   1        else if(location==L18)
+ 242   1        {
+ 243   2          P2=0xff;
+ 244   2          P1=0xff;
+ 245   2          last2=1;
+ 246   2          last1=0;
+ 247   2          if(dp)
+ 248   2            P0=num_tab[num]|0x80;
+ 249   2          else
+ 250   2            P0=num_tab[num];
+ 251   2        }
+ 252   1      }
+ 253          
+ 254          void Show()
+ 255          {
+ 256   1        switch(show_flag)
+ 257   1        {
+ 258   2          case L1: {Dispaly(L1,ID_num[0],0);  break;}
+ 259   2          case L2: {Dispaly(L2,ID_num[1],0);  break;}
+ 260   2          case L3: {Dispaly(L3,ID_num[2],0);    break;}
+ 261   2          case L4: {Dispaly(L4,ID_num[3],0);    break;}
+ 262   2          case L5: {Dispaly(L5,ID_num[4],0);    break;}
+ 263   2          case L6: {Dispaly(L6,ID_num[5],0);    break;}
+ 264   2          case L7: {Dispaly(L7,ID_num[6],0);    break;}
+ 265   2          case L8: {Dispaly(L8,ID_num[7],0);    break;}
+ 266   2          case L9: {Dispaly(L9,ID_num[8],0);    break;}
+ 267   2          case L10: {Dispaly(L10,ID_num[9],0);    break;}
+ 268   2          case L11: {Dispaly(L11,ID_num[10],0);   break;}
+ 269   2          case L12: {Dispaly(L12,ID_num[11],0);   break;}
+ 270   2          case L13: {Dispaly(L13,ID_num[12],0);   break;}
+ 271   2          case L14: {Dispaly(L14,ID_num[13],0);   break;}
+ 272   2          case L15: {Dispaly(L15,ID_num[14],0);   break;}
+ 273   2          case L16: {Dispaly(L16,ID_num[15],0);   break;}
+ 274   2          case L17: {Dispaly(L17,ID_num[16],0);   break;}
+ 275   2          case L18: {Dispaly(L18,ID_num[17],0);   break;}
+ 276   2                                                      
+ 277   2      
+ 278   2        }
+ 279   1      }
+ 280          
+ 281          void Send_Str(char *tx,int str_size)
+ 282          {
+ 283   1        unsigned char i;
+ 284   1        if(str_size>1)
+ 285   1        {
+ 286   2          for(i=0;i<str_size;i++)
+ 287   2          {
+ 288   3            SBUF=*(tx+i);
+ 289   3            while(TI==0);
+ 290   3            TI=0;
+ 291   3          }
+ 292   2        }
+ 293   1        else
+ 294   1        {
+ 295   2          SBUF=*tx;
+ 296   2          while(TI==0);
+ 297   2          TI=0;
+ 298   2        }
+ 299   1      }
+ 300          
+ 301          void Device_Init()
+ 302          {
+C51 COMPILER V9.60.0.0   MAIN                                                              11/25/2019 07:28:38 PAGE 6   
+
+ 303   1        P0=0x00;
+ 304   1        P2=0x00;
+ 305   1        P1=0x00;
+ 306   1        memset(getbuff,'\0',19);
+ 307   1        
+ 308   1        memset(ID_num,0,18);
+ 309   1        
+ 310   1        SCON=0x50;
+ 311   1        PCON=0;
+ 312   1        ES=1;
+ 313   1        
+ 314   1        TMOD=0x21;
+ 315   1        //ÏÔÊ¾
+ 316   1        ET0=1;
+ 317   1        TH0=(65535-1000)/256;
+ 318   1        TL0=(65535-1000)%256; //10ms
+ 319   1        
+ 320   1        TH1=0xfd;
+ 321   1        TL1=0xfd; //9600bps
+ 322   1        
+ 323   1        EA=1;
+ 324   1        TR0=1;
+ 325   1        TR1=1;
+ 326   1      }
+ 327          
+ 328          int main()
+ 329          {
+ 330   1        Device_Init();
+ 331   1        Send_Str(sendbuff,sizeof(sendbuff));
+ 332   1        
+ 333   1        
+ 334   1        while(1)
+ 335   1        {
+ 336   2          if(get_ready)
+ 337   2          {
+ 338   3            unsigned char i;
+ 339   3            for(i=0;i<18;i++)
+ 340   3            {
+ 341   4              ID_num[i]=getbuff[i]-'0';
+ 342   4            }
+ 343   3            memset(getbuff,'\0',19);
+ 344   3            get_ready=0;
+ 345   3          }
+ 346   2        }
+ 347   1      }
+ 348          
+ 349          
+ 350          void Timer0_Int() interrupt 1
+ 351          {
+ 352   1        TH0=(65535-1000)/256;
+ 353   1        TL0=(65535-1000)%256;
+ 354   1        
+ 355   1        show_flag++;
+ 356   1        if(show_flag>L18)
+ 357   1        {
+ 358   2          show_flag=L1;
+ 359   2        }
+ 360   1        Show();
+ 361   1      
+ 362   1      }
+ 363          
+ 364          void UART_Recv() interrupt 4
+C51 COMPILER V9.60.0.0   MAIN                                                              11/25/2019 07:28:38 PAGE 7   
+
+ 365          {
+ 366   1        static unsigned char rev_count=0;
+ 367   1        if(RI==1&&get_ready==0)
+ 368   1        {
+ 369   2          getbuff[rev_count]=SBUF;
+ 370   2          if(rev_count>17)
+ 371   2          {
+ 372   3            getbuff[18]='\0';
+ 373   3            rev_count=0;
+ 374   3            get_ready=1;
+ 375   3          }
+ 376   2          else
+ 377   2          {
+ 378   3            rev_count++;
+ 379   3          }
+ 380   2          RI=0;
+ 381   2        }
+ 382   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    998    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =    103       6
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

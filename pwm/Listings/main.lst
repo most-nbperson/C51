@@ -1,0 +1,79 @@
+C51 COMPILER V9.60.0.0   MAIN                                                              11/21/2019 22:44:36 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\Tools\MDK_C51\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listing
+                    -s\main.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          
+   3          sbit OUT1=P2^0;
+   4          sbit OUT2=P2^1;
+   5          sbit OUT3=P2^2;
+   6          
+   7          unsigned char count_200=0;
+   8          
+   9          void Device_Init() {
+  10   1          OUT1=1; // 20ms  50%
+  11   1          OUT2=1; // 200ms 25%
+  12   1          OUT3=1; // 200ms 80%
+  13   1      
+  14   1          TMOD=0x01;
+  15   1          TH0=(65535-10000)/256;
+  16   1          TL0=(65535-10000)%256;
+  17   1      
+  18   1          ET0=1;
+  19   1          EA=1;
+  20   1          TR0=1;
+  21   1      
+  22   1      }
+  23          
+  24          int main() {
+  25   1          Device_Init();
+  26   1          while (1);
+  27   1      }
+  28          
+  29          void TIM1_Sev() interrupt 1 
+  30          {   //10ms一次
+  31   1          TH0=(65535-10000)/256;
+  32   1          TL0=(65535-10000)%256;
+  33   1      
+  34   1          count_200++;
+  35   1          OUT1=!OUT1;
+  36   1      
+  37   1          if(count_200>5)
+  38   1          {
+  39   2              OUT2=0;
+  40   2          }
+  41   1      
+  42   1          if(count_200>16)
+  43   1          {
+  44   2              OUT3=0;
+  45   2          }
+  46   1      
+  47   1          if(count_200>20)    //一个周期结束
+  48   1          {
+  49   2              OUT2=1;
+  50   2              OUT3=1;
+  51   2              count_200=0;
+  52   2          }
+  53   1      }
+
+C51 COMPILER V9.60.0.0   MAIN                                                              11/21/2019 22:44:36 PAGE 2   
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    104    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

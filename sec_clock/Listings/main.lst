@@ -1,4 +1,4 @@
-C51 COMPILER V9.60.0.0   MAIN                                                              11/11/2019 23:33:24 PAGE 1   
+C51 COMPILER V9.60.0.0   MAIN                                                              11/19/2019 14:11:47 PAGE 1   
 
 
 C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
@@ -10,214 +10,335 @@ line level    source
 
    1          #include <reg51.h>
    2          
-   3          sbit location1=P2^0;
-   4          sbit location2=P2^1;
-   5          sbit location3=P2^2;
-   6          sbit location4=P2^3;
-   7          
-   8          enum
-   9          {
-  10            L1=1,
-  11            L2=2,
-  12            L3=3,
-  13            L4=4
-  14          };
-  15          
-  16          unsigned char count=0;
-  17          unsigned char count_flag=1;
+   3          enum
+   4          {
+   5            L1,
+   6            L2,
+   7            L3,
+   8            L4,
+   9            L5,
+  10            L6,
+  11            L7,
+  12            L8
+  13          };
+  14          
+  15          sbit begin=P3^0;
+  16          sbit stop=P3^1;
+  17          sbit rst=P3^2;
   18          
-  19          int clock_num_sec=0;
-  20          int clock_num_min=0;
-  21          
-  22          unsigned char num1=0;//千位
-  23          unsigned char num2=0;//百位
-  24          unsigned char num3=0;//十位
-  25          unsigned char num4=0;//个位
+  19          unsigned char count=0;
+  20          unsigned char count_flag=0;
+  21          unsigned char show_flag=L1;
+  22          
+  23          int clock_num_sec=0;
+  24          int clock_num_min=0;
+  25          int clock_num_hour=0;
   26          
-  27          char num_tab[10]={0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f};
-  28          
-  29          void Dispaly(unsigned char location,unsigned char num,unsigned char dp);
-  30          void Device_Init();
-  31          void Delay(int i);
+  27          unsigned char ms1=0;
+  28          unsigned char ms2=0;
+  29          
+  30          unsigned char sec1=0;
+  31          unsigned char sec2=0;
   32          
-  33          void main()
-  34          {
-  35   1        Device_Init();
-  36   1        while(1)
-  37   1        {
-  38   2          num4=clock_num_min/10;
-  39   2          num3=clock_num_min%10;
-  40   2          
-  41   2          num2=clock_num_sec/10;
-  42   2          num1=clock_num_sec%10;
-  43   2          
-  44   2          Dispaly(L1,num4,0);
-  45   2          Dispaly(L2,num3,0);
-  46   2          Dispaly(L3,num2,0);
-  47   2          Dispaly(L4,num1,0);   
-  48   2      
-  49   2        }
-  50   1      
-  51   1      
-  52   1      }
-  53          
-  54          void Dispaly(unsigned char location,unsigned char num,unsigned char dp)
-C51 COMPILER V9.60.0.0   MAIN                                                              11/11/2019 23:33:24 PAGE 2   
+  33          unsigned char min1=0;
+  34          unsigned char min2=0;
+  35          
+  36          unsigned char houer1=0;
+  37          unsigned char houer2=0;
+  38          
+  39          char num_tab[10]={0x3f,0x06,0x5b,0x4f,0x66,0x6d,0x7d,0x07,0x7f,0x6f};
+  40          char location_tab[10]={0xfe,0xfd,0xfb,0xf7,0xef,0xdf,0xbf,0x7f};
+  41          
+  42          void Dispaly(unsigned char location,unsigned char num,unsigned char dp);
+  43          void Device_Init();
+  44          void Delay(int i);
+  45          void Show();
+  46          
+  47          void main()
+  48          {
+  49   1        Device_Init();
+  50   1        while(1)
+  51   1        {
+  52   2          if(begin==0)
+  53   2          {
+  54   3            count_flag=1;
+C51 COMPILER V9.60.0.0   MAIN                                                              11/19/2019 14:11:47 PAGE 2   
 
-  55          {
-  56   1        if(location==L1)
-  57   1        {
-  58   2          location1=0;
-  59   2          location2=1;
-  60   2          location3=1;
-  61   2          location4=1;
-  62   2          
-  63   2          if(dp)
-  64   2            P0=num_tab[num]|0x80;
-  65   2          else
-  66   2            P0=num_tab[num];
-  67   2          
-  68   2          Delay(100);
-  69   2          P0=0x00;  //消隐
-  70   2        }
-  71   1        else if(location==L2)
-  72   1        {
-  73   2          location1=1;
-  74   2          location2=0;
-  75   2          location3=1;
-  76   2          location4=1;
-  77   2          
-  78   2          if(dp)
-  79   2            P0=num_tab[num]|0x80;
-  80   2          else
-  81   2            P0=num_tab[num];
-  82   2          
-  83   2          Delay(100);
-  84   2          P0=0x00;  //消隐
-  85   2        }
-  86   1        else if(location==L3)
-  87   1        {
-  88   2          location1=1;
-  89   2          location2=1;
-  90   2          location3=0;
-  91   2          location4=1;
-  92   2          
-  93   2          if(dp)
-  94   2            P0=num_tab[num]|0x80;
-  95   2          else
-  96   2            P0=num_tab[num];
-  97   2          
-  98   2          Delay(100);
-  99   2          P0=0x00;  //消隐
- 100   2        }
- 101   1        else if(location==L4)
- 102   1        {
- 103   2          location1=1;
- 104   2          location2=1;
- 105   2          location3=1;
- 106   2          location4=0;
- 107   2          
- 108   2          if(dp)
- 109   2            P0=num_tab[num]|0x80;
- 110   2          else
- 111   2            P0=num_tab[num];
- 112   2          
- 113   2          Delay(100);
- 114   2          P0=0x00;  //消隐
- 115   2        }
- 116   1      
-C51 COMPILER V9.60.0.0   MAIN                                                              11/11/2019 23:33:24 PAGE 3   
+  55   3          }
+  56   2          else if(stop==0)
+  57   2          {
+  58   3            count_flag=0;
+  59   3          }
+  60   2          
+  61   2          if(rst==0)
+  62   2          {
+  63   3            count_flag=0;
+  64   3            count=0;
+  65   3            clock_num_sec=0;
+  66   3            clock_num_min=0;
+  67   3            clock_num_hour=0;
+  68   3          }
+  69   2          
+  70   2          
+  71   2          
+  72   2          
+  73   2          ms1=count/10;
+  74   2          ms2=count%10;
+  75   2          
+  76   2          sec1=clock_num_sec/10;
+  77   2          sec2=clock_num_sec%10;
+  78   2          
+  79   2          min1=clock_num_min/10;
+  80   2          min2=clock_num_min%10;
+  81   2      
+  82   2          houer1=clock_num_hour/10;
+  83   2          houer2=clock_num_hour%10;
+  84   2      
+  85   2      //    Dispaly(L1,houer1,0);
+  86   2      //    Dispaly(L2,houer2,1);
+  87   2      //    Dispaly(L3,min1,0);
+  88   2      //    Dispaly(L4,min2,1);
+  89   2      //    Dispaly(L5,sec1,0);
+  90   2      //    Dispaly(L6,sec2,1);
+  91   2      //    Dispaly(L7,ms1,0);
+  92   2      //    Dispaly(L8,ms2,1);
+  93   2      
+  94   2            
+  95   2        }
+  96   1      
+  97   1      
+  98   1      }
+  99          
+ 100          void Show()
+ 101          {
+ 102   1        switch(show_flag)
+ 103   1        {
+ 104   2          case L1: {Dispaly(L1,houer1,0); break;}
+ 105   2          case L2: {Dispaly(L2,houer2,1); break;}
+ 106   2          case L3: {Dispaly(L3,min1,0);   break;}
+ 107   2          case L4: {Dispaly(L4,min2,1);   break;}
+ 108   2          case L5: {Dispaly(L5,sec1,0);   break;}
+ 109   2          case L6: {Dispaly(L6,sec2,1);   break;}
+ 110   2          case L7: {Dispaly(L7,ms1,0);    break;}
+ 111   2          case L8: {Dispaly(L8,ms2,1);    break;}
+ 112   2      
+ 113   2        }
+ 114   1      }
+ 115          
+ 116          void Dispaly(unsigned char location,unsigned char num,unsigned char dp)
+C51 COMPILER V9.60.0.0   MAIN                                                              11/19/2019 14:11:47 PAGE 3   
 
- 117   1      }
- 118          
- 119          void Device_Init()
- 120          {
- 121   1        P0=0x00;
- 122   1        
- 123   1        location1=0;
- 124   1        location2=0;
- 125   1        location3=0;
- 126   1        location4=0;
- 127   1        
- 128   1        TMOD=0x10;
- 129   1        ET1=1;
- 130   1        TH1=(65535-50000)/256;
- 131   1        TL1=(65535-50000)%256;  //50ms
- 132   1        
- 133   1        IT0=1;
- 134   1        EX0=1;
- 135   1        PX0=1;
- 136   1        
- 137   1        IT1=1;
- 138   1        EX1=1;
- 139   1        PX1=1;
- 140   1        
- 141   1        EA=1;
- 142   1        TR1=1;
- 143   1      
- 144   1        
- 145   1      
- 146   1        
- 147   1        
- 148   1      }
- 149          
- 150          void Timer1_Int() interrupt 3
- 151          {
- 152   1        TH1=(65535-50000)/256;
- 153   1        TL1=(65535-50000)%256;  //50ms
- 154   1        if(count_flag)
+ 117          {
+ 118   1        if(location==L1)
+ 119   1        {
+ 120   2          P2=location_tab[L1];
+ 121   2          
+ 122   2          if(dp)
+ 123   2            P0=num_tab[num]|0x80;
+ 124   2          else
+ 125   2            P0=num_tab[num];
+ 126   2          
+ 127   2      //    Delay(100);
+ 128   2      //    P0=0x00;  //消隐
+ 129   2        }
+ 130   1        else if(location==L2)
+ 131   1        {
+ 132   2          P2=location_tab[L2];
+ 133   2          
+ 134   2          if(dp)
+ 135   2            P0=num_tab[num]|0x80;
+ 136   2          else
+ 137   2            P0=num_tab[num];
+ 138   2          
+ 139   2      //    Delay(100);
+ 140   2      //    P0=0x00;  //消隐
+ 141   2        }
+ 142   1        else if(location==L3)
+ 143   1        {
+ 144   2          P2=location_tab[L3];
+ 145   2          
+ 146   2          if(dp)
+ 147   2            P0=num_tab[num]|0x80;
+ 148   2          else
+ 149   2            P0=num_tab[num];
+ 150   2          
+ 151   2      //    Delay(100);
+ 152   2      //    P0=0x00;  //消隐
+ 153   2        }
+ 154   1        else if(location==L4)
  155   1        {
- 156   2          count++;
- 157   2          if(count>20)
- 158   2          {
- 159   3            count=0;
- 160   3            
- 161   3            clock_num_sec++;
- 162   3            if(clock_num_sec>60)
- 163   3            {
- 164   4              clock_num_min++;
- 165   4              clock_num_sec=0;
- 166   4            }
- 167   3              
- 168   3            if(clock_num_min>99)
- 169   3            {
- 170   4              clock_num_sec=0;
- 171   4              clock_num_min=0;
- 172   4            }
- 173   3      
- 174   3              
- 175   3            
- 176   3          }
+ 156   2          P2=location_tab[L4];
+ 157   2          
+ 158   2          if(dp)
+ 159   2            P0=num_tab[num]|0x80;
+ 160   2          else
+ 161   2            P0=num_tab[num];
+ 162   2          
+ 163   2      //    Delay(100);
+ 164   2      //    P0=0x00;  //消隐
+ 165   2        }
+ 166   1        else if(location==L5)
+ 167   1        {
+ 168   2          P2=location_tab[L5];
+ 169   2          
+ 170   2          if(dp)
+ 171   2            P0=num_tab[num]|0x80;
+ 172   2          else
+ 173   2            P0=num_tab[num];
+ 174   2          
+ 175   2      //    Delay(100);
+ 176   2      //    P0=0x00;  //消隐
  177   2        }
- 178   1      
-C51 COMPILER V9.60.0.0   MAIN                                                              11/11/2019 23:33:24 PAGE 4   
+ 178   1        else if(location==L6)
+C51 COMPILER V9.60.0.0   MAIN                                                              11/19/2019 14:11:47 PAGE 4   
 
- 179   1      }
- 180          
- 181          void Delay(int i)
- 182          {
- 183   1        while(i--);       
- 184   1      }
- 185          
- 186          void Stop_Int() interrupt 0
- 187          {
- 188   1        count_flag=!count_flag;
- 189   1      }
- 190          
- 191          void Rst_Int() interrupt 2
- 192          {
- 193   1        clock_num_sec=0;
- 194   1        clock_num_min=0;
- 195   1      }
- 196          
+ 179   1        {
+ 180   2          P2=location_tab[L6];
+ 181   2          
+ 182   2          if(dp)
+ 183   2            P0=num_tab[num]|0x80;
+ 184   2          else
+ 185   2            P0=num_tab[num];
+ 186   2          
+ 187   2      //    Delay(100);
+ 188   2      //    P0=0x00;  //消隐
+ 189   2        }
+ 190   1        else if(location==L7)
+ 191   1        {
+ 192   2          P2=location_tab[L7];
+ 193   2          
+ 194   2          if(dp)
+ 195   2            P0=num_tab[num]|0x80;
+ 196   2          else
+ 197   2            P0=num_tab[num];
+ 198   2          
+ 199   2      //    Delay(100);
+ 200   2      //    P0=0x00;  //消隐
+ 201   2        }
+ 202   1        else if(location==L8)
+ 203   1        {
+ 204   2          P2=location_tab[L8];
+ 205   2          
+ 206   2          if(dp)
+ 207   2            P0=num_tab[num]|0x80;
+ 208   2          else
+ 209   2            P0=num_tab[num];
+ 210   2          
+ 211   2      //    Delay(100);
+ 212   2      //    P0=0x00;  //消隐
+ 213   2        }
+ 214   1      }
+ 215          
+ 216          void Device_Init()
+ 217          {
+ 218   1        P0=0x00;
+ 219   1        P2=0x00;
+ 220   1        
+ 221   1        TMOD=0x11;
+ 222   1        //计时
+ 223   1        ET1=1;
+ 224   1        TH1=(65535-10000)/256;
+ 225   1        TL1=(65535-10000)%256;  //10ms
+ 226   1        //显示
+ 227   1        ET0=1;
+ 228   1        TH0=(65535-1000)/256;
+ 229   1        TL0=(65535-1000)%256; //10ms
+ 230   1        
+ 231   1        
+ 232   1      //  IT0=1;
+ 233   1      //  EX0=1;
+ 234   1      //  PX0=1;
+ 235   1      //  
+ 236   1      //  IT1=1;
+ 237   1      //  EX1=1;
+ 238   1      //  PX1=1;
+ 239   1        
+ 240   1        EA=1;
+C51 COMPILER V9.60.0.0   MAIN                                                              11/19/2019 14:11:47 PAGE 5   
+
+ 241   1        
+ 242   1        TR1=1;
+ 243   1        TR0=1;
+ 244   1      }
+ 245          
+ 246          void Timer1_Int() interrupt 3
+ 247          {
+ 248   1        TH1=(65535-10000)/256;
+ 249   1        TL1=(65535-10000)%256;
+ 250   1        
+ 251   1        if(count_flag)
+ 252   1        {
+ 253   2          count++;
+ 254   2          if(count>100)
+ 255   2          {
+ 256   3            count=0;
+ 257   3            
+ 258   3            clock_num_sec++;
+ 259   3            if(clock_num_sec>59)
+ 260   3            {
+ 261   4              clock_num_min++;
+ 262   4              clock_num_sec=0;
+ 263   4            }
+ 264   3              
+ 265   3            if(clock_num_min>59)
+ 266   3            {
+ 267   4              clock_num_hour++;
+ 268   4              clock_num_sec=0;
+ 269   4              clock_num_min=0;
+ 270   4            }
+ 271   3            
+ 272   3            if(clock_num_hour>23)
+ 273   3            {
+ 274   4              clock_num_hour=0;
+ 275   4              clock_num_sec=0;
+ 276   4              clock_num_min=0;
+ 277   4            }
+ 278   3          }
+ 279   2        }
+ 280   1      }
+ 281          
+ 282          void Timer0_Int() interrupt 1
+ 283          {
+ 284   1        TH0=(65535-1000)/256;
+ 285   1        TL0=(65535-1000)%256;
+ 286   1        
+ 287   1        show_flag++;
+ 288   1        if(show_flag>L8)
+ 289   1        {
+ 290   2          show_flag=L1;
+ 291   2        }
+ 292   1        Show();
+ 293   1      
+ 294   1      }
+ 295          
+ 296          void Delay(int i)
+ 297          {
+ 298   1        while(i--);       
+ 299   1      }
+ 300          
+ 301          //void Stop_Int() interrupt 0
+ 302          //{
+C51 COMPILER V9.60.0.0   MAIN                                                              11/19/2019 14:11:47 PAGE 6   
+
+ 303          //  count_flag=!count_flag;
+ 304          //}
+ 305          
+ 306          //void Rst_Int() interrupt 2
+ 307          //{
+ 308          //  count=0;
+ 309          //  clock_num_sec=0;
+ 310          //  clock_num_min=0;
+ 311          //  clock_num_hour=0;
+ 312          //}
+ 313          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    452    ----
+   CODE SIZE        =    623    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =     20       3
+   DATA SIZE        =     37    ----
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
 END OF MODULE INFORMATION.
