@@ -1,0 +1,173 @@
+C51 COMPILER V9.60.0.0   MAIN                                                              12/03/2019 15:02:55 PAGE 1   
+
+
+C51 COMPILER V9.60.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\Tools\MDK_C51\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listing
+                    -s\main.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          #include <stdio.h>
+   3          #include <string.h>
+   4          #include <math.h>
+   5          //ADC
+   6          sbit ALE=P3^5;  //一个脉冲 锁存地址
+   7          sbit START=P3^4;  //开始脉冲
+   8          sbit EOC=P3^2;  //转换完成为高 经过非门为低
+   9          
+  10          unsigned char get_value;
+  11          const int VREF1=5; //参考电压+
+  12          const int VREF2=0; //参考电压-
+  13          double vin=0;//输入电压实际
+  14          //DAC
+  15          int num=0;
+  16          
+  17          char str[20];
+  18          char recvbuff='1';
+  19          
+  20          void Device_Init()
+  21          {
+  22   1        TMOD=0x21;
+  23   1        TH0=(65535-10)/256;
+  24   1        TL0=(65535-10)%256;
+  25   1        ET0=1;
+  26   1        SCON=0x50;
+  27   1        PCON=0;
+  28   1        ES=1;
+  29   1        TH1=0xfd;
+  30   1        TL1=0xfd; //9600bps
+  31   1        
+  32   1        IT0=1;
+  33   1        EX0=1;
+  34   1        
+  35   1        IT1=1;
+  36   1        EX1=1;
+  37   1        
+  38   1        EA=1;
+  39   1        
+  40   1        TR1=1;
+  41   1        TR0=1;
+  42   1        
+  43   1        ALE=0;
+  44   1        START=0;
+  45   1      }
+  46          
+  47          void Pluse()
+  48          {
+  49   1        ALE=1;
+  50   1        START=1;
+  51   1        ALE=0;
+  52   1        START=0;
+  53   1      }
+  54          
+C51 COMPILER V9.60.0.0   MAIN                                                              12/03/2019 15:02:55 PAGE 2   
+
+  55          void Send_Str(char *tx,int str_size)
+  56          {
+  57   1        unsigned char i;
+  58   1        if(str_size>1)
+  59   1        {
+  60   2          for(i=0;i<str_size;i++)
+  61   2          {
+  62   3            SBUF=*(tx+i);
+  63   3            while(TI==0);
+  64   3            TI=0;
+  65   3          }
+  66   2        }
+  67   1        else
+  68   1        {
+  69   2          SBUF=*tx;
+  70   2          while(TI==0);
+  71   2          TI=0;
+  72   2        }
+  73   1      }
+  74          
+  75          int main()
+  76          {
+  77   1        Device_Init();
+  78   1        while(1)
+  79   1        {
+  80   2          
+  81   2      //    if(recvbuff=='1')
+  82   2      //    {
+  83   2      //      for(num=0;num<360;num++)
+  84   2      //      {
+  85   2      //        P1=127+127*sin((float)num/180*3.1415);
+  86   2      //      }
+  87   2      //    }
+  88   2      //    else if(recvbuff=='2')
+  89   2      //    {
+  90   2      //      for(num=0;num<255;num++)
+  91   2      //      {
+  92   2      //        P1=num;
+  93   2      //      }
+  94   2      //      for(num=255;num>0;num--)
+  95   2      //      {
+  96   2      //        P1=num;
+  97   2      //      }
+  98   2      //    }
+  99   2      //    else if(recvbuff=='3')
+ 100   2      //    {
+ 101   2      //      for(num=0;num<255;num++)
+ 102   2      //      {
+ 103   2      //        P1=num;
+ 104   2      //      }
+ 105   2      //    }
+ 106   2        }
+ 107   1      }
+ 108          
+ 109          
+ 110          void ADC_Begin() interrupt 2
+ 111          {
+ 112   1        P2=0xff;
+ 113   1        Pluse();
+ 114   1      }
+ 115          
+ 116          void ADC() interrupt 0
+C51 COMPILER V9.60.0.0   MAIN                                                              12/03/2019 15:02:55 PAGE 3   
+
+ 117          {
+ 118   1        while(EOC==1);
+ 119   1        get_value=P2;
+ 120   1        vin=(get_value/256.0)*(VREF1-VREF2);
+ 121   1        sprintf(str,"   it is %f\n  ",vin);
+ 122   1        Send_Str(str,sizeof(str));
+ 123   1        memset(str,'\0',20);
+ 124   1      }
+ 125          
+ 126          void DAC() interrupt 1
+ 127          {
+ 128   1        TH0=(65535-1000)/256;
+ 129   1        TL0=(65535-1000)%256;
+ 130   1        
+ 131   1        P1=num;
+ 132   1        
+ 133   1        num++;
+ 134   1        if(num>255)
+ 135   1          num=0;
+ 136   1      }
+ 137          
+ 138          void UART_Recv() interrupt 4
+ 139          {
+ 140   1        if(RI)
+ 141   1        {
+ 142   2          recvbuff=SBUF;
+ 143   2          RI=0;
+ 144   2        }
+ 145   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    370    ----
+   CONSTANT SIZE    =     15    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     32       5
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

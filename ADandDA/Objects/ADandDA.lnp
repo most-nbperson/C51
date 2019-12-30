@@ -1,0 +1,4 @@
+".\Objects\STARTUP.obj",
+".\Objects\main.obj" 
+TO ".\Objects\ADandDA" 
+PRINT(".\Listings\ADandDA.m51")
